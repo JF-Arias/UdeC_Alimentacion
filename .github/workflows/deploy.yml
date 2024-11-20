@@ -1,0 +1,22 @@
+name: Deploy to FTP server
+
+on:
+  push:
+    branches:
+      - main  # Cambia esto según la rama que uses para producción
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ftp://45.132.157.19
+          username: u983503200.Grupo2703
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./  # Asegúrate de que sea el directorio raíz de tu repositorio
+          server-dir: /UdeC_Alimetacion/  # Ruta correcta en el servidor

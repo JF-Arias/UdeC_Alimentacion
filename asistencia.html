@@ -44,33 +44,37 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Asegúrate de tener jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Evento para manejar el envío del formulario
-        document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        $(document).ready(function () {
+            // Evento cuando se envía el formulario
+            $('#attendanceForm').on('submit', function (e) {
+                e.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
 
-            const codigoEstudiante = document.getElementById('codigo_estudiante').value;
-            const messageDiv = document.getElementById('message');
+                var codigoEstudiante = $('#codigo_estudiante').val();
 
-            try {
-                const response = await fetch('api.php?action=register_attendance', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ codigo_estudiante: codigoEstudiante })
+                // Realizar la solicitud AJAX para registrar la asistencia
+                $.ajax({
+                    url: 'api.php?action=registerAttendance', // Ruta de tu API
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ codigo_estudiante: codigoEstudiante }), // Datos a enviar
+                    success: function (response) {
+                        // Verifica si la respuesta es un objeto, no es necesario hacer JSON.parse()
+                        var result = response; 
+                        
+                        // Mostrar mensaje con estilo de alerta
+                        var alertClass = result.success ? 'alert-success' : 'alert-danger';
+                        $('#message').html('<div class="alert ' + alertClass + '">' + result.message + '</div>');
+                    },
+                    error: function () {
+                        $('#message').html('<div class="alert alert-danger">Ocurrió un error al procesar la solicitud.</div>');
+                    }
                 });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    messageDiv.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                } else {
-                    messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
-                }
-            } catch (error) {
-                messageDiv.innerHTML = `<div class="alert alert-danger">Error al registrar la asistencia.</div>`;
-            }
+            });
         });
     </script>
+
 </body>
 </html>

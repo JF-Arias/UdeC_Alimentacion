@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Errores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #dc3545;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn {
+            font-size: 16px;
+            padding: 10px;
+            width: 100%;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Reporte de Errores</h2>
+            </div>
+            <div class="card-body">
+                <form id="errorForm">
+                    <div class="mb-3">
+                        <label for="id_usuario" class="form-label">ID del Usuario</label>
+                        <input type="text" class="form-control" id="id_usuario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="documento_estudiante" class="form-label">Documento del Estudiante</label>
+                        <input type="text" class="form-control" id="documento_estudiante" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacion" class="form-label">Observación del Error</label>
+                        <textarea class="form-control" id="observacion" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Enviar Reporte</button>
+                </form>
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('errorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const idUsuario = document.getElementById('id_usuario').value;
+            const documentoEstudiante = document.getElementById('documento_estudiante').value;
+            const observacion = document.getElementById('observacion').value;
+
+            fetch('reporte_errores.php?action=create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_usuario: idUsuario,
+                    documento_estudiante: documentoEstudiante,
+                    observacion: observacion,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerHTML = data.message;
+                if (data.success) {
+                    document.getElementById('errorForm').reset();
+                }
+            })
+            .catch(error => {
+                document.getElementById('message').innerHTML = 'Error al enviar el reporte: ' + error.message;
+            });
+        });
+    </script>
+</body>
+</html>

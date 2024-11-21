@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Datos - Asistencia</title>
+    <!-- Incluyendo Bootstrap desde el CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Análisis de Asistencia - Día Actual</h2>
+            </div>
+            <div class="card-body">
+                <h4>Asistencia del día</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre Estudiante</th>
+                            <th>Hora de Asistencia</th>
+                            <th>Estado de Beneficio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="asistenciaTableBody">
+                        <!-- Aquí se cargarán los registros de asistencia -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para obtener la asistencia del día
+        function getAsistenciaDia() {
+            // URL de la API que devuelve los registros de asistencia
+            const apiUrl = 'ruta_a_tu_api/registro_asistencia_dia.php'; // Cambia la ruta según corresponda
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const asistenciaTableBody = document.getElementById('asistenciaTableBody');
+                        asistenciaTableBody.innerHTML = ''; // Limpiar la tabla antes de agregar los nuevos registros
+
+                        data.asistencia.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.nombre_estudiante}</td>
+                                <td>${item.hora_asistencia}</td>
+                                <td>${item.estado_beneficio == 1 ? 'Activo' : 'Inactivo'}</td>
+                            `;
+                            asistenciaTableBody.appendChild(row);
+                        });
+                    } else {
+                        document.getElementById('asistenciaTableBody').innerHTML = `<tr><td colspan="3" class="text-center">${data.message}</td></tr>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos de asistencia:', error);
+                });
+        }
+
+        // Llamar a la función al cargar la página
+        window.onload = getAsistenciaDia;
+    </script>
+</body>
+</html>

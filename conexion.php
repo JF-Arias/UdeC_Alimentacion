@@ -1,9 +1,9 @@
 <?php
 function getConnection() {
     $host = 'localhost';
-    $dbname = 'alimentacion';
-    $username = 'root';
-    $password = '';
+    $dbname = 'u983503200_20242_cd703g2';
+    $username = 'u983503200_20242_cd703g2';
+    $password = 'Udec2024*';
 
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

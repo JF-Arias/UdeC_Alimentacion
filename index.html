@@ -3,31 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Universidad de Cundinamarca</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <title>Login</title>
+    <!-- Incluyendo Bootstrap desde el CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+        }
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .form-control {
+            border-radius: 8px;
+        }
+        .alert {
+            border-radius: 8px;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow p-4" style="width: 25rem;">
-        <div class="text-center mb-4">
-        <img src="logo_ucundinamarca.png" alt="Logo UdeC" class="img-fluid" style="max-width: 100px;">
-        <h4 class="mt-3">Inicio de Sesión</h4>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Iniciar Sesión</h2>
+            </div>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="nom_usuario" class="form-label">Usuario</label>
+                        <input type="text" id="nom_usuario" class="form-control" placeholder="Usuario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                </form>
+                <div id="message" class="mt-3"></div>
+            </div>
         </div>
-        <form action="/control/control_login.php" method="POST">
-        <div class="mb-3">
-            <label for="usuario" class="form-label">Usuario</label>
-            <input type="text" id="usuario" name="usuario" class="form-control" placeholder="Ingresa tu usuario" required>
+        <div class="mt-3">
+            <p>No tienes cuenta? <a href="registro.html">Regístrate aquí</a></p>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Ingresa tu contraseña" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-            <div class="text-center mt-3">
-        <a href="/public/registro.php" class="text-decoration-none">¿No tienes una cuenta? Regístrate</a>
-        </div>
-    </form>
     </div>
-    </div>
-</body>
-</html>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom_usuario = document.getElementById('nom_usuario').value;
+            const password = document.getElementById('password').value;
+    
+            try {
+                const response = await fetch('api.php?action=login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nom_usuario, password })
+                });
+    
+                const result = await response.json();
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerText = result.message;
+    
+                if (result.success) {
+                    messageDiv.classList.add('alert', 'alert-success');
+                    messageDiv.classList.remove('alert-danger');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html'; // Redirigir al dashboard
+                    }, 1500);
+                } else {
+                    messageDiv.classList.add('alert', 'alert-danger');
+                    messageDiv.classList.remove('alert-success');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+    
